@@ -11,4 +11,4 @@ Pre-Requisites:
 Command Line Usage:
 ==================
 
-/askrally <project_name> <Incoming_webHook>
+/askrally project_name Incoming_webHook
