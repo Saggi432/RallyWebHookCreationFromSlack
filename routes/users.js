@@ -8,26 +8,9 @@ var Promise = require('promise');
 var rallyUserStory = require("./getUserStoryList.js");
 var rallyTask = require("./getTaskList.js");
 var rallyDefect = require("./getDefectList.js");
+var postToSlack = require("./postToSlack.js");
 var request = require("request");
 //Initialize the rally api also
-
-var rally = require('rally'),
-    restApi = rally({
-		apiKey: '_5bbElOOaQnCVR31GcSr2JtKvsSHTkeFitsPbuCVY',
-		server: 'https://rally1.rallydev.com', 
-		requestOptions: {
-            headers: {
-		'X-RallyIntegrationName': 'My cool node.js program',  
-		'X-RallyIntegrationVendor': 'My company',  
-		 'X-RallyIntegrationVersion': '1.0'   
-		}
-	}
-    });
-
-    refUtils = rally.util.ref;
-
-    queryUtils = rally.util.query;
-
 
 /* GET users listing. */
 router.post('/', function(req, res, next) {
@@ -40,27 +23,27 @@ router.post('/', function(req, res, next) {
         var userId = req.body.user_id;
 	console.log(req.body.user_id);
 
-          var requestUpdate = req.body.text;
+        var requestUpdate = req.body.text;
 
-	   var updateArr = requestUpdate.split(" ");
+        var updateArr = requestUpdate.split(" ");
   	console.log('The first arg' + updateArr[0]);
-  console.log('The second arg' + updateArr[1]);
-  console.log('The third arg' + updateArr[2]);
+        console.log('The second arg' + updateArr[1]);
+        console.log('The third arg' + updateArr[2]);
 
 
 
 
   	//res.send('respond with a resource using nodemon' + requestUpdate);
   	//
-var userEmail = '';
-var p2 = new Promise(function(resolve, reject) {
+	var userEmail = '';
+	var p2 = new Promise(function(resolve, reject) {
 
-var options = { method: 'GET',
-  url: 'https://slack.com/api/users.info',
-  json: true,
-  qs:
-   { token: 'xoxp-73682018566-73679687940-148470253792-a5c154a3281508c7de382b143389ba69',
-     user: userId,
+		var options = { method: 'GET',
+  			url: 'https://slack.com/api/users.info',
+  			json: true,
+  			qs:
+   			{ token: 'xoxp-73682018566-73679687940-148470253792-a5c154a3281508c7de382b143389ba69',
+     				user: userId,
      pretty: '1' },
   headers:
    { 'postman-token': '12e9f11a-b6e3-b88d-a444-b73b3b9eb5a1',
@@ -77,25 +60,26 @@ request(options, function (error, response, body) {
   
 });
 
-}
+})
 
 
 p2.then(function(value) {
   console.log(value);
-  var value = sample1(value);
-  return value;
+  //var value = sample1(value);
+  //Do a dummy post to slack to avoid 200ms error
+  return userEmail;
 }).then(function(value) {
   console.log(value);
-  var value = rallyUserStory.getUserStoryList();
+  var value = rallyUserStory.getUserStoryList(value);
   console.log('The value is' + value);
   return value;
-).then(function(value) {
+}).then(function(value) {
   console.log(value);
   var value = rallyTask.getTaskList();
   console.log('The value is' + value);
   return value;
 
-).then(function(value) {
+}).then(function(value) {
   console.log(value);
   var value = rallyDefect.getDefectList();
   console.log('The value is' + value);
@@ -103,53 +87,9 @@ p2.then(function(value) {
 
 
 }).then(function(value) {
+  //Post to slack the results we have fetched
   console.log('In third function' + value);
 });
-
-console.log(emailUser);
-
-
-
-  var requestUpdate = req.body.text;
-
-  var updateArr = requestUpdate.split(" ");
-  console.log('The first arg' + updateArr[0]);
-  console.log('The second arg' + updateArr[1]);
-  console.log('The third arg' + updateArr[2]);
-
-//If they are asking for mylist
-
-if(updateArr[0].toString() == "mylist") {
-//userMail();
-var usermailid = userEmail;
-console.log('The user email id is' + usermailid);
-
-console.log('Hurray i am in mylist now');
-}
-
-function sample1() {
-
-console.log('in sample 1 function');
-for(i=0;i<1000;i++) {
-console.log(i);
-}
-
-}
-
-function sample2() {
-
-console.log('In sample2 function');
-
-}
-
-sample1()
-	.then(sample2);
-
-
-
-
-
-
 
 
 
